@@ -84,9 +84,9 @@ class VM(GcpUtils):
 
     def generate_dict_for_db(self, project, zone, instance_name):
         vm_dict_data = {}
-        vm_dict_data.__setitem__('vm_name',instance_name)
-        vm_dict_data.__setitem__('project',project)
-        vm_dict_data.__setitem__('zone',zone)
+        vm_dict_data.__setitem__('vm_name', instance_name)
+        vm_dict_data.__setitem__('project', project)
+        vm_dict_data.__setitem__('zone', zone)
         vm_dict_data.__setitem__('status', 1)
         return vm_dict_data
 

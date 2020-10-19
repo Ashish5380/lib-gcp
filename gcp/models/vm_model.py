@@ -14,6 +14,10 @@ class Vm(Base):
     id_stopped = Column('is_stopped', SmallInteger, default=0)
     status = Column('status', SmallInteger, default=1)
 
+    @staticmethod
+    def create_table(engine):
+        Base.metadata.create_all(engine)
+
     def __init__(self, data):
         self.id = data['id']
         self.vm_name = data['vm_name']
