@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "segmind-base",
+  "private_key_id": "02a58ee8852da3a810532f4178e657a01e549781",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC2GdW1hCDQ1hh/\nskZOLOMeKLNVu3gbFl6Rjz1k1CLYm4TVyAwI+hA1TGQz5u1GsqYr8mfUS6AEX/Wy\nPNjz+xfUttatsYlQUQcVCo9DPUf5M+i7wYJIJEz7Dq8dQeXvZoy0K41MuCvzfOhy\nK6NYpbz6xgkbAo6KM9SeiF2ZzHWcH9a9dIIWXm+6DprKf9DabSphVeg7bP5tZe8+\nAkXzRZ/SykocT1Ehq4ZJC7ODDdUOQyY9/FTt9Ilir9IyzFY2yorgqDEmXqHsz5PV\nJ+4Ux21NaCUjY+ukPCP6VlG40JUjVacFSytICrynKRbfIVASbqmujya9TxzSbrPs\nTXqVC6ZfAgMBAAECggEAHGGrFkRb8lCRYZhWhClTffLX/ee0ZicMDDcSrtwFUP9E\nKnxTATSAQYkAy7oVMddMNj3srYDalXP4pj6njbc31Uu96opoyAoo8WruPeDs48vn\nB8RhhX7q5JeQTB4Q3p7Rao9TJtREPV8ywgCdJTGHt7S/3I7UdSPI4qsxnh6TbLFM\n0vu/udjueXxJHy7t1jWJNY12E19LpvA3TUrXNt/M+1VHtvRl+N4T9+n2BXP8WQEz\naTytSPFlpG681NY5zeMWa91Q/4ZQBxAgv2F3//KCsxEi5Skhi1e2MXqxhPbW2m5W\n8UONZHrUs48LyJHF+oFsjHat9cy3lDI3mFPo/hnWKQKBgQDpjOefcgW9HVyledxo\neqRzSQPWPrtQHODqHrTCimNaKpY6gJfvM4MPut3IgXky7tb7W2nerMfjF9pjRB3K\nLx3zAo4M2BNx+ohA2E5UES5qoGwlw1rlhf71efO1EKFtXtctq7ThVVYhLQNwZ0rg\nthhnbkVY2jhmM/26uasspN8kIwKBgQDHmuLIa2/5Fi4/C+GhPPzNToorkE4FrXsd\nOnNalMbfqiscwqccOVQcJUjt0c1lsCvwE6JygTOAiys3fMLy4ozuYJXyfkf9j4s9\npYAq/fZlH+0z/cNl/yEucDBpQNugIzOcQXS0dtkJKLMBHP77NEjqaKRe43bi+VL+\nw8kClzjKlQKBgGT+XZsBf6HL9KhKDhnQDxUbWeFntzBpjIkxRhFqLpRrHhOmUA1M\nRTykHgv6kSKJTcXcPefg5384bWPHrOolfdn8HNlJBv+eyxTfdN+9nkjVnm6mD8R5\nMUuNtOlzi5r0DDDfs5RNhrVJ9dbBlAugMuVnNe26T/FCQlJgv7jKgwPpAoGAIu5T\nE7nhjZi5HSVqJfpzT0aYXYlSbiHu8q2A9HAm4Yt5If5amlDaDFbmDWBy7oHHHquA\n+ULtDWjNdldqEnFdMnZKp3Y8CP6u4mntJRjunsHYlAmrwVTFrMfLYRANn1ept4Wo\n88/8qWKq+N3nLXT38bXAVi6+Zng1cwo2SjLGqIUCgYBzFiyn9hm+rHySvJbZ4gth\nus5fjEGgc/GnFKrLTvZl0NvZcDcS4f4Tm2GayVD3+RiK1ReHJ+5IPagAJ3WXtamm\np6m9yZYxtABrVVqdw/6h+/BZZfscN9t2bzUQIK6cLzn9+y3gZa5b8SfLOt5ZPvTR\nEibZLOZHJvJMUAsd/EyQhg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "segmind-auth@segmind-base.iam.gserviceaccount.com",
+  "client_id": "111165826409640547093",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/segmind-auth%40segmind-base.iam.gserviceaccount.com"
+}

@@ -29,7 +29,7 @@ class GcpUtils:
             instance=name).execute()
 
     @staticmethod
-    def create_instance(compute, project, zone, name, bucket):
+    def create_instance(compute, project, zone, name):
         # Get the latest ubuntu-minimal-1804-lts image.
         image_response = compute.images().getFromFamily(
             project='ubuntu-os-cloud', family='ubuntu-minimal-1804-lts').execute()
@@ -82,9 +82,6 @@ class GcpUtils:
                     # instance upon startup.
                     'key': 'startup-script',
                     'value': startup_script
-                }, {
-                    'key': 'bucket',
-                    'value': bucket
                 }]
             }
         }

@@ -1,4 +1,4 @@
-#!/usr/bin python3
+#! /usr/bin/python3
 """
 Very simple HTTP server in python for logging requests\
  Usage::
@@ -29,7 +29,7 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
 
 
-def run(server_class=HTTPServer, handler_class=S, port=8080):
+def run(server_class=HTTPServer, handler_class=S, port=9080):
     logging.basicConfig(level=logging.INFO)
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)

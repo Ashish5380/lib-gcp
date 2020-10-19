@@ -1,4 +1,3 @@
-[config]
-DEFAULT_REGION = "asia-south1-c"
-BUCKET = "segmind-bucket"
-DEFAULT_PROJECT = "segmind-base"
+[config]=
+DEFAULT_REGION = us-central1-a
+DEFAULT_PROJECT = segmind-base
