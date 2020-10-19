@@ -18,6 +18,7 @@ class VM(GcpUtils):
     def validate_argument(instance_name):
         if instance_name is None:
             raise Exception("No instance name passed hence not creating a vm")
+            # TODO check if the name follows this regex (?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)
         else:
             return True
 
@@ -36,11 +37,8 @@ class VM(GcpUtils):
         Once the image is uploaded press enter to delete the instance.
         """.format(bucket))
 
-        if wait:
-            input()
-
+    def call_gcp_for_deleting_instance(self, project, zone, instance_name, bucket):
         print('Deleting instance.')
-
         operation = self.delete_instance(self.compute, project, zone, instance_name)
         self.wait_for_operation(self.compute, project, zone, operation['name'])
 
@@ -68,3 +66,20 @@ class VM(GcpUtils):
         except Exception as e:
             print("Some error occurred while loading properties :: {0}".format(e))
         return prop_json
+
+    def delete_existing_instance(self, project, zone, instance_name, bucket):
+        try:
+            self.call_gcp_for_deleting_instance(project, zone, instance_name, bucket)
+        except Exception as e:
+            print("Exception while deleting the instance :: {}".format(e))
+
+    def list_all_vm_instance_gcp(self, project, zone):
+        try:
+            instances = GcpUtils.list_instances(self.compute, project, zone)
+            print('Instances in project %s and zone %s:' % (project, zone))
+            for instance in instances:
+                print(' - ' + instance['name'])
+        except Exception as e:
+            print("Exception while gitting list of instances from gcp ::{0}".format(e))
+
+

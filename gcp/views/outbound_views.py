@@ -17,5 +17,6 @@ def create_gcp_instance():
     bucket = article["bucket"]
     instance_name = article["instanceName"]
     zone = article["zone"]
-    VM.create_new_instance(project, zone, instance_name, bucket)
+    inst = VM()
+    inst.create_new_instance(project, zone, instance_name, bucket)
     return Response(status=200)
