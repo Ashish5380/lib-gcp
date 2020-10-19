@@ -29,7 +29,7 @@ class VM(GcpUtils):
         operation = self.delete_instance(self.compute, project, zone, instance_name)
         self.wait_for_operation(self.compute, project, zone, operation['name'])
 
-    def validate_vm_req_db(self,instance_name):
+    def validate_vm_req_db(self, instance_name):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
         try:
@@ -39,16 +39,19 @@ class VM(GcpUtils):
             raise Exception("Cannot create instance, unable to reach database server")
         finally:
             session.close()
-        if result is not None:
-            return False
-        else:
+        print("Result in database :: {0}".format(result))
+        if len(result) == 0:
             return True
+        else:
+            return False
 
     def create_new_instance(self, project, zone, instance_name):
         print("Data for creating instance :: {0}, {1}. {2}".format(project, zone, instance_name))
         if self.validate_vm_req_db(instance_name):
-            self.call_gcp_for_creating_instance(project, zone, instance_name)
             self.put_vm_request_to_db(project, zone, instance_name)
+            self.call_gcp_for_creating_instance(project, zone, instance_name)
+        else:
+            raise Exception("Found resource in db with same instance name, try with different instance name")
 
     def get_instance(self):
         pass
@@ -73,13 +76,16 @@ class VM(GcpUtils):
         session = Session()
         data = self.generate_dict_for_db(project, zone, instance_name)
         try:
+            print("Data for entering in db :: {0}".format(data))
             vm_data = Vm(data=data)
             session.add(vm_data)
         except Exception as e:
             print("Some error occurred while adding data to database :: {0}".format(e))
+            session.rollback()
             session.close()
             raise Exception("Unable to create entry for data in database")
         finally:
+            session.commit()
             session.close()
 
     def generate_dict_for_db(self, project, zone, instance_name):
@@ -88,6 +94,7 @@ class VM(GcpUtils):
         vm_dict_data.__setitem__('project', project)
         vm_dict_data.__setitem__('zone', zone)
         vm_dict_data.__setitem__('status', 1)
+        vm_dict_data.__setitem__('is_stopped', 0)
         return vm_dict_data
 
 

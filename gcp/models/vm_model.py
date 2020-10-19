@@ -11,7 +11,7 @@ class Vm(Base):
     vm_name = Column('vm_name', VARCHAR)
     zone = Column('zone', VARCHAR)
     project = Column('project', VARCHAR)
-    id_stopped = Column('is_stopped', SmallInteger, default=0)
+    is_stopped = Column('is_stopped', SmallInteger, default=0)
     status = Column('status', SmallInteger, default=1)
 
     @staticmethod
@@ -19,11 +19,11 @@ class Vm(Base):
         Base.metadata.create_all(engine)
 
     def __init__(self, data):
-        self.id = data['id']
         self.vm_name = data['vm_name']
         self.zone = data['zone']
         self.project = data['project']
         self.status = data['status']
+        self.id_stopped = data['is_stopped']
 
     @classmethod
     def find_by_name(cls, session, name):

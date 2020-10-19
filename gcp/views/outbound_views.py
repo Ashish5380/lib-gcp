@@ -26,7 +26,6 @@ def delete_gcp_instance():
     data = request.data
     article = json.loads(data, encoding="UTF-8")
     project = article["project"]
-    bucket = article["bucket"]
     instance_name = article["instanceName"]
     zone = article["zone"]
     inst = VM()
