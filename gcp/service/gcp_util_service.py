@@ -39,9 +39,7 @@ class GcpUtils:
         machine_type = "zones/%s/machineTypes/n1-standard-1" % zone
         startup_script = open(
             os.path.join(
-                os.path.dirname(__file__), 'startup-script.sh'), 'r').read()
-        image_url = "http://storage.googleapis.com/gce-demo-input/photo.jpg"
-        image_caption = "Ready for dessert?"
+                os.path.dirname(__file__), 'startup-script.py'), 'r').read()
 
         config = {
             'name': name,
@@ -84,12 +82,6 @@ class GcpUtils:
                     # instance upon startup.
                     'key': 'startup-script',
                     'value': startup_script
-                }, {
-                    'key': 'url',
-                    'value': image_url
-                }, {
-                    'key': 'text',
-                    'value': image_caption
                 }, {
                     'key': 'bucket',
                     'value': bucket
