@@ -57,6 +57,8 @@ class VM(GcpUtils):
         pass
 
     def delete_existing_instance(self, project, zone, instance_name):
+        if self.validate_vm_req_db(instance_name):
+            raise Exception("The given instance name is already deleted")
         try:
             self.call_gcp_for_deleting_instance(project, zone, instance_name)
         except Exception as e:

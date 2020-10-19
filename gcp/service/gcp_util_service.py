@@ -1,5 +1,7 @@
 import time
 import os
+import requests
+from gcp.mapper.gcp_request_mapper import load_image_url
 
 
 class GcpUtils:
@@ -95,3 +97,18 @@ class GcpUtils:
     def list_instances(compute, project, zone):
         result = compute.instances().list(project=project, zone=zone).execute()
         return result['items'] if 'items' in result else None
+
+    @staticmethod
+    def create_machine_image(machine_image_name, project_id, vm_url):
+        url_json = load_image_url()
+        url = url_json["IMAGE_URL"]
+        url = url.replace("<PROJECT_ID>", project_id)
+        body = {
+            "name": machine_image_name,
+            "sourceInstance": vm_url
+        }
+        response = requests.post(url, body)
+        if response.status_code == 200:
+            return response
+        else:
+            raise Exception("Unable to create image from the existing vm :: {0}".format(response))

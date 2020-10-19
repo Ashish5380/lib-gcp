@@ -31,3 +31,9 @@ def delete_gcp_instance():
     inst = VM()
     inst.delete_existing_instance(project, zone, instance_name)
     return Response(status=200)
+
+
+@views.route("/delete-instance/{id}", methods=['DELETE'])
+def delete_gcp_instance_by_id(id):
+    vm_id = id
+    pass

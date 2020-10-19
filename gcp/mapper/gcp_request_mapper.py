@@ -15,3 +15,14 @@ def load_default_gcp_properties():
     except Exception as e:
         print("Some error occurred while loading properties :: {0}".format(e))
     return prop_json
+
+
+def load_image_url():
+    prop_json = {}
+    config = ConfigParser()
+    try:
+        config.read(gcp_constants_file)
+        prop_json.__setitem__('IMAGE_URL', config["url"]["GCP_URL"])
+    except Exception as e:
+        print("Some error occurred while loading image url from imi file :: {0}".format(e))
+    return prop_json
