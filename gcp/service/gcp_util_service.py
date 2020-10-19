@@ -30,9 +30,9 @@ class GcpUtils:
 
     @staticmethod
     def create_instance(compute, project, zone, name, bucket):
-        # Get the latest Debian Jessie image.
+        # Get the latest ubuntu-minimal-1804-lts image.
         image_response = compute.images().getFromFamily(
-            project='debian-cloud', family='debian-9').execute()
+            project='ubuntu-os-cloud', family='ubuntu-minimal-1804-lts').execute()
         source_disk_image = image_response['selfLink']
 
         # Configure the machine
