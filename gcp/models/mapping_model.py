@@ -21,3 +21,6 @@ class Mapping(Base):
         self.im_id = data['im_id']
         self.status = data['status']
 
+    @classmethod
+    def find_by_vm_id(cls, vm_id, session):
+        return session.query(cls).filter_by(vm_id=vm_id).filter_by(status=1).all()

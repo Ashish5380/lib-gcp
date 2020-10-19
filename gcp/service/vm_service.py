@@ -48,8 +48,8 @@ class VM(GcpUtils):
     def create_new_instance(self, project, zone, instance_name):
         print("Data for creating instance :: {0}, {1}. {2}".format(project, zone, instance_name))
         if self.validate_vm_req_db(instance_name):
-            self.put_vm_request_to_db(project, zone, instance_name)
             self.call_gcp_for_creating_instance(project, zone, instance_name)
+            self.put_vm_request_to_db(project, zone, instance_name)
         else:
             raise Exception("Found resource in db with same instance name, try with different instance name")
 
