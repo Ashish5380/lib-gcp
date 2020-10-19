@@ -33,7 +33,7 @@ class VM(GcpUtils):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
         try:
-            result = Vm().find_by_name(session,instance_name)
+            result = Vm.find_by_name(session, instance_name)
         except Exception as e:
             print("Some exception occurred while fetch vm details from db :: {0}".format(e))
             raise Exception("Cannot create instance, unable to reach database server")
