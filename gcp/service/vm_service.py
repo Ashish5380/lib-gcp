@@ -42,7 +42,7 @@ class VM(GcpUtils):
         print('Deleting instance.')
 
         operation = self.delete_instance(self.compute, project, zone, instance_name)
-        self.wait_for_operation(compute, project, zone, operation['name'])
+        self.wait_for_operation(self.compute, project, zone, operation['name'])
 
     def create_new_instance(self, project, zone, instance_name, bucket):
         if project is None:
