@@ -107,6 +107,7 @@ class GcpUtils:
             "name": machine_image_name,
             "sourceInstance": vm_url
         }
+        print("Url for creating machine image :: {0}, and body :: {1}".format(url, body))
         response = requests.post(url, body)
         if response.status_code == 200:
             return response
