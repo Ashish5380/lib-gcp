@@ -134,8 +134,9 @@ class VM(GcpUtils):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
         try:
-            vm_obj.status = 0
-            session.add(vm_obj)
+            new_vm_obj = Vm.query.filter_by(id=vm_obj.id).first()
+            new_vm_obj.status = 0
+            session.add(new_vm_obj)
         except Exception as e:
             print("Error occurred while updating status of vm :: {0}".format(e))
             raise Exception("Unable to create conection from database")
