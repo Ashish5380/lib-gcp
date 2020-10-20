@@ -35,4 +35,4 @@ class Vm(Base):
 
     @classmethod
     def find_by_id(cls, session, vm_id):
-        return session.query(cls).filter_by(id=vm_id).all()
+        return session.query(cls).filter_by(id=vm_id).first()

@@ -134,7 +134,7 @@ class VM(GcpUtils):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
         try:
-            new_vm_obj = Vm.query.filter_by(id=vm_obj.id).first()
+            new_vm_obj = Vm.find_by_id(session, vm_obj.id)
             new_vm_obj.status = 0
             session.add(new_vm_obj)
         except Exception as e:
