@@ -1,16 +1,23 @@
 import googleapiclient
+import os
 from gcp.models.database import Database
 from gcp.models.imagemodel import ImageModel
 from sqlalchemy.orm import sessionmaker
 from gcp.service.gcp_util_service import GcpUtils
 from gcp.models.mapping_model import Mapping
 from googleapiclient import discovery
+from google.oauth2 import service_account
+relative = "./"
+dir_name = os.path.abspath(relative)
+gcp_cred_file = os.path.join(dir_name, 'gcp/constants/segmind-base-cred.json')
+scopes = ['https://www.googleapis.com/auth/cloud-platform']
+credentials = service_account.Credentials.from_service_account_file(gcp_cred_file, scopes=scopes)
 
 
 class Image(GcpUtils):
     def __init__(self):
         self.db_engine = Database().create_db_engine()
-        self.compute = googleapiclient.discovery.build('compute', 'v1')
+        self.compute = googleapiclient.discovery.build('compute', 'v1', credentials=credentials)
 
     def validate_image(self, image_name):
         Session = sessionmaker(bind=self.db_engine)

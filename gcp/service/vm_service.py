@@ -1,4 +1,5 @@
 import googleapiclient
+import os
 from googleapiclient import discovery
 from gcp.service.gcp_util_service import GcpUtils
 from gcp.models.database import Database
@@ -6,11 +7,17 @@ from sqlalchemy.orm import sessionmaker
 from gcp.models.vm_model import Vm
 from gcp.service.image_service import Image
 from gcp.models.mapping_model import Mapping
+from google.oauth2 import service_account
+relative = "./"
+dir_name = os.path.abspath(relative)
+gcp_cred_file = os.path.join(dir_name, 'gcp/constants/segmind-base-cred.json')
+scopes = ['https://www.googleapis.com/auth/cloud-platform']
+credentials = service_account.Credentials.from_service_account_file(gcp_cred_file, scopes=scopes)
 
 
 class VM(GcpUtils):
     def __init__(self):
-        self.compute = googleapiclient.discovery.build('compute', 'v1')
+        self.compute = googleapiclient.discovery.build('compute', 'v1', credentials=credentials)
         self.db_engine = Database().create_db_engine()
 
     def call_gcp_for_creating_instance(self, project, zone, instance_name):
