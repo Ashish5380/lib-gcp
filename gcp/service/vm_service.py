@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from gcp.models.vm_model import Vm
 from gcp.service.image_service import Image
 
+
 class VM(GcpUtils):
     def __init__(self):
         self.compute = googleapiclient.discovery.build('compute', 'v1')
@@ -33,7 +34,7 @@ class VM(GcpUtils):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
         try:
-            result = Vm.find_by_name(session, instance_name)
+            result = Vm.find_by_name_and_status(session, instance_name)
         except Exception as e:
             print("Some exception occurred while fetch vm details from db :: {0}".format(e))
             raise Exception("Cannot create instance, unable to reach database server")
@@ -59,12 +60,18 @@ class VM(GcpUtils):
     def delete_existing_instance(self, instance_name, img_name):
         if self.validate_vm_req_db(instance_name):
             raise Exception("The given instance name is already deleted")
-        try:
-            vm_obj = Vm.find_by_name(instance_name)
-            self.create_machine_image_and_mapping(vm_obj, img_name)
-            self.call_gcp_for_deleting_instance(vm_obj.project, vm_obj.zone, vm_obj.instance_name)
-        except Exception as e:
-            print("Exception while deleting the instance :: {}".format(e))
+        else:
+            Session = sessionmaker(bind=self.db_engine)
+            session = Session()
+            try:
+                vm_obj = Vm.find_by_name(session, instance_name)
+                print("vm object from db :: {0}".format(vm_obj))
+                self.create_machine_image_and_mapping(vm_obj, img_name)
+                self.call_gcp_for_deleting_instance(vm_obj.project, vm_obj.zone, vm_obj.instance_name)
+            except Exception as e:
+                print("Exception while deleting the instance :: {}".format(e))
+            finally:
+                session.close()
 
     def list_all_vm_instance_gcp(self, project, zone):
         try:

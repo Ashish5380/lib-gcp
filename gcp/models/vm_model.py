@@ -26,8 +26,12 @@ class Vm(Base):
         self.id_stopped = data['is_stopped']
 
     @classmethod
+    def find_by_name_and_status(cls, session, name):
+        return session.query(cls).filter_by(vm_name=name).filter_by(status=1).all()
+
+    @classmethod
     def find_by_name(cls, session, name):
-        return session.query(cls).filter_by(vm_name=name).all()
+        return session.query(cls).filter_by(vm_name=name).first()
 
     @classmethod
     def find_by_id(cls, session, vm_id):

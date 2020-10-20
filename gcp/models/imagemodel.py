@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-class Image(Base):
+class ImageModel(Base):
     __tablename__ = "images"
 
     id = Column('id', Integer, primary_key=True, autoincrement=True)
@@ -23,6 +23,6 @@ class Image(Base):
 
     @classmethod
     def find_by_name(cls, session, name):
-        return session.query(cls).filter_by(vm_name=name).filter_by(status=1).all()
+        return session.query(cls).filter_by(image_name=name).filter_by(status=1).all()
 
 

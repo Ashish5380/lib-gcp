@@ -1,6 +1,5 @@
-from gcp.service.vm_service import VM
 from gcp.models.database import Database
-from gcp.models.image_model import Image
+from gcp.models.imagemodel import ImageModel
 from sqlalchemy.orm import sessionmaker
 from gcp.service.gcp_util_service import GcpUtils
 from gcp.models.mapping_model import Mapping
@@ -10,11 +9,11 @@ class Image(GcpUtils):
     def __init__(self):
         self.db_engine = Database().create_db_engine()
 
-    def validate_image(self,image_name):
+    def validate_image(self, image_name):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
         try:
-            result = Image.find_by_name(image_name)
+            result = ImageModel.find_by_name(session, image_name)
         except Exception as e:
             print("Some exception occurred while fetch image details from db :: {0}".format(e))
             raise Exception("Cannot create instance, unable to reach database server")
@@ -42,7 +41,7 @@ class Image(GcpUtils):
         data = self.generate_dict_for_db(image_name=image_name)
         try:
             print("Data for entering in db :: {0}".format(data))
-            vm_data = Image(data=data)
+            vm_data = ImageModel(data=data)
             session.add(vm_data)
         except Exception as e:
             print("Some error occurred while adding data to database :: {0}".format(e))
@@ -89,9 +88,9 @@ class Image(GcpUtils):
             Session = sessionmaker(bind=self.db_engine)
             session = Session()
             try:
-                image_result = Image.find_by_name(session, image_name)
+                image_result = ImageModel.find_by_name(session, image_name)
                 old_im_id = self.update_mapping_table(vm_obj.id, image_result.id, is_existing=1)
-                old_image = Image.query.filter_by(id=old_im_id).first()
+                old_image = ImageModel.query.filter_by(id=old_im_id).first()
                 old_image.is_dirty_resource = 1
             except Exception as e:
                 print("Some error occurred while updating mapping for vm and image :: {0}".format(e))
@@ -120,6 +119,8 @@ class Image(GcpUtils):
         mapping_dict.__setitem__("im_id", im_id)
         mapping_dict.__setitem__("status", 1)
         return mapping_dict
+
+
 
 
 

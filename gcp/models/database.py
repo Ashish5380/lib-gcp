@@ -4,7 +4,7 @@ relative = "./"
 dir_name = os.path.abspath(relative)
 gcp_db_path = os.path.join(dir_name, 'gcp_init.db')
 from gcp.models.vm_model import Vm
-from gcp.models.image_model import Image
+from gcp.models.imagemodel import ImageModel
 
 
 class Database:
@@ -21,4 +21,4 @@ class Database:
 
     def create_all_tables(self):
         Vm.create_table(self._db_engine)
-        Image.create_table(self._db_engine)
+        ImageModel.create_table(self._db_engine)

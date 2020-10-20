@@ -1,7 +1,8 @@
 import time
 import os
 import requests
-from gcp.mapper.gcp_request_mapper import load_image_url
+import json
+from gcp.mapper.gcp_request_mapper import *
 
 
 class GcpUtils:
@@ -108,7 +109,7 @@ class GcpUtils:
             "sourceInstance": vm_url
         }
         print("Url for creating machine image :: {0}, and body :: {1}".format(url, body))
-        response = requests.post(url, body)
+        response = requests.post(url, data=json.dumps(body), headers=load_gcp_credentials())
         if response.status_code == 200:
             return response
         else:

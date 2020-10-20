@@ -3,4 +3,4 @@ DEFAULT_REGION = us-central1-a
 DEFAULT_PROJECT = segmind-base
 
 [url]=
-GCP_URL = https://compute.googleapis.com/compute/beta/projects/<PROJECT_ID>/global/machineImages
+GCP_URL = https://compute.googleapis.com/compute/beta/projects/<PROJECT_ID>/global/machineImages?key=AIzaSyCEoEx92foFDgTT4mnXX2idoRa-LJm8NpU
