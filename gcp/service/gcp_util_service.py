@@ -10,19 +10,24 @@ class GcpUtils:
     @staticmethod
     def wait_for_operation(compute, project, zone, operation):
         print('Waiting for operation to finish...')
-        while True:
-            result = compute.zoneOperations().get(
-                project=project,
-                zone=zone,
-                operation=operation).execute()
+        try:
+            while True:
+                result = compute.zoneOperations().get(
+                    project=project,
+                    zone=zone,
+                    operation=operation).execute()
 
-            if result['status'] == 'DONE':
-                print("done.")
-                if 'error' in result:
-                    raise Exception(result['error'])
-                return result
+                if result['status'] == 'DONE':
+                    print("done.")
+                    if 'error' in result:
+                        raise Exception(result['error'])
+                    return result
 
-            time.sleep(1)
+                time.sleep(1)
+        except Exception as e:
+            print("Some exception occurred while waiting for operation :: {0}".format(e))
+            print("Waiting 1 seconds for image creation")
+            time.sleep(60)
 
     @staticmethod
     def delete_instance(compute, project, zone, name):
@@ -33,10 +38,10 @@ class GcpUtils:
 
     @staticmethod
     def create_instance(compute, project, zone, name, image_project='ubuntu-os-cloud',
-                        image_family='ubuntu-minimal-1804-lts'):
+                        image_name='ubuntu-minimal-1804-bionic-v20201014'):
         # Get the latest ubuntu-minimal-1804-lts image.
-        image_response = compute.images().getFromFamily(
-            project=image_project, family=image_family).execute()
+        image_response = compute.images().get(
+            project=image_project, image=image_name).execute()
         source_disk_image = image_response['selfLink']
 
         # Configure the machine

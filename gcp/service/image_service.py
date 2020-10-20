@@ -55,7 +55,7 @@ class Image(GcpUtils):
     def create_machine_image_update_mapping(self, image_name, vm_obj, family_name):
         if self.validate_image(image_name):
             source_disk = self.generate_source_disk(vm_obj)
-            self.create_normal_image(self.compute, image_name, source_disk, family_name, vm_obj.project)
+            self.call_gcp_for_creating_image(image_name, source_disk, family_name, vm_obj)
             self.put_image_request_to_db(image_name, family_name)
             self.update_mapping(vm_obj, image_name)
         else:
@@ -147,4 +147,9 @@ class Image(GcpUtils):
         finally:
             session.close()
         return img_obj
+
+    def call_gcp_for_creating_image(self, image_name, source_disk, family_name, vm_obj):
+        operation = self.create_normal_image(self.compute, image_name, source_disk, family_name, vm_obj.project)
+        GcpUtils.wait_for_operation(self.compute, vm_obj.project, vm_obj.zone, operation['name'])
+        print("Image created with name :: {0}".format(image_name))
 

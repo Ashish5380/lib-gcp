@@ -82,7 +82,7 @@ class VM(GcpUtils):
             try:
                 vm_obj = Vm.find_by_name(session, instance_name)
                 print("vm object from db :: {0}".format(vm_obj))
-                self.stop_instance(self.compute, vm_obj.project, vm_obj.zone, vm_obj.vm_name)
+                self.call_gcp_for_stopping_instance(vm_obj.project, vm_obj.zone, vm_obj.vm_name)
                 self.create_machine_image_and_mapping(vm_obj, img_name, family_name)
                 self.call_gcp_for_deleting_instance(vm_obj.project, vm_obj.zone, vm_obj.vm_name)
             except Exception as e:
@@ -149,7 +149,8 @@ class VM(GcpUtils):
             vm_dict = self.create_new_vm_request(instance_name)
             print("Data for restarting vm :: {0}".format(vm_dict))
             self.call_gcp_for_recreating_instance(vm_dict['project'], vm_dict['zone'],
-                                                  vm_dict['instance_name'], vm_dict['image_name'], vm_dict['family'])
+                                                  vm_dict['instance_name'], vm_dict['image_name'],
+                                                  vm_dict['family_project'])
             self.update_vm_object_for_restart(vm_dict)
         else:
             raise Exception("The given instance name is either or running or not created yet")
@@ -159,8 +160,8 @@ class VM(GcpUtils):
         session = Session()
         try:
             vm_obj = Vm.find_by_name(session, instance_name)
-            mapping_obj = Mapping.find_by_vm_id(session, vm_obj.id)
-            image_obj = Image.get_image_from_db(mapping_obj.im_id)
+            mapping_obj = Mapping.find_by_vm_id(vm_obj.id, session)
+            image_obj = Image().get_image_from_db(mapping_obj.im_id)
         except Exception as e:
             print("Some error occurred while getting vm, image and mapping information from db :: {0}".format(e))
             raise Exception("Unable to create connection to database")
@@ -170,13 +171,13 @@ class VM(GcpUtils):
         return vm_dict
 
     def create_vm_data(self, vm_obj, image_obj):
-        if image_obj is not None and vm_obj is None:
+        if image_obj is not None and vm_obj is not None:
             data_dict = {}
             data_dict.__setitem__("instance_name", vm_obj.vm_name)
             data_dict.__setitem__("project", vm_obj.project)
             data_dict.__setitem__("zone", vm_obj.zone)
             data_dict.__setitem__("image_name", image_obj.image_name)
-            data_dict.__setitem__("family", image_obj.family)
+            data_dict.__setitem__("family_project", vm_obj.project)
             return data_dict
         else:
             raise Exception("Data saved in database is malformed")
@@ -184,7 +185,7 @@ class VM(GcpUtils):
     def call_gcp_for_recreating_instance(self, project, zone, instance_name, image_name, family):
         print('Recreating instance .... {0}'.format(instance_name))
         operation = GcpUtils.create_instance(self.compute, project, zone, instance_name,
-                                             image_project=image_name, image_family=family)
+                                             image_project=family, image_name=image_name)
         GcpUtils.wait_for_operation(self.compute, project, zone, operation['name'])
         instances = GcpUtils.list_instances(self.compute, project, zone)
         print('Instances in project %s and zone %s:' % (project, zone))
@@ -207,5 +208,10 @@ class VM(GcpUtils):
         finally:
             session.commit()
             session.close()
+
+    def call_gcp_for_stopping_instance(self, project, zone, vm_name):
+        operation = self.stop_instance(self.compute, project, zone, vm_name)
+        self.wait_for_operation(self.compute, project, zone, operation['name'])
+
 
 

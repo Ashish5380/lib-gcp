@@ -32,10 +32,11 @@ def delete_gcp_instance():
     return Response(status=200)
 
 
-@views.route("/restart-instance/", methods=['PUT'])
+@views.route("/restart-instance", methods=['PUT'])
 def restart_gcp_instance_from_image():
     data = request.data
     article = json.loads(data, encoding="UTF-8")
     validated_article = validate_restart_request(article)
     inst = VM()
-    pass
+    inst.restart_instance(validated_article['instanceName'])
+    return Response(status=200)
