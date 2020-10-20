@@ -13,6 +13,7 @@ def load_default_gcp_properties():
         config.read(gcp_constants_file)
         prop_json.__setitem__("DEFAULT_REGION", config["config"]["DEFAULT_REGION"])
         prop_json.__setitem__("DEFAULT_PROJECT", config["config"]["DEFAULT_PROJECT"])
+        prop_json.__setitem__("DEFAULT_FAMILY", config["config"]["DEFAULT_FAMILY"])
     except Exception as e:
         print("Some error occurred while loading properties :: {0}".format(e))
     return prop_json

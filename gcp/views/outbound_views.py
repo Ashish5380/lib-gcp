@@ -2,7 +2,7 @@ from gcp.service.vm_service import *
 from flask import request, Response
 from . import views
 import json
-from gcp.validators.request_validator import validate_argument
+from gcp.validators.request_validator import *
 
 
 @views.route("/status", methods=['GET'])
@@ -25,11 +25,10 @@ def create_gcp_instance():
 def delete_gcp_instance():
     data = request.data
     article = json.loads(data, encoding="UTF-8")
-    instance_name = article["instanceName"]
-    img_name = article["imageName"]
-    family_name = article["familyName"]
+    validated_article = validate_delete_request(article)
     inst = VM()
-    inst.delete_existing_instance(instance_name, img_name, family_name)
+    inst.delete_existing_instance(validated_article['instanceName'], validated_article['imageName'],
+                                  validated_article['familyName'])
     return Response(status=200)
 
 

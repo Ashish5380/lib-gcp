@@ -22,7 +22,7 @@ class Image(GcpUtils):
             raise Exception("Cannot create instance, unable to reach database server")
         finally:
             session.close()
-        if len(result) == 0:
+        if result is None:
             return True
         else:
             return False

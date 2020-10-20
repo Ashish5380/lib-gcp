@@ -26,4 +26,25 @@ def validate_argument(article):
 
 
 def validate_delete_request(article):
-    pass
+    new_article = {}
+    default_prop = load_default_gcp_properties()
+    if 'instanceName' in article:
+        if re.match(pattern="(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)", string=article["instanceName"]) is None:
+            raise Exception("Please provide a valid instance name")
+        else:
+            new_article.__setitem__('instanceName', article['instanceName'])
+    else:
+        raise Exception("No instance name passed hence terminating process")
+    if 'familyName' in article:
+        new_article.__setitem__('familyName', article['familyName'])
+    else:
+        print("Using default zone for creating VM instance")
+        new_article.__setitem__('familyName', default_prop['DEFAULT_FAMILY'])
+    if 'imageName' in article:
+        if re.match(pattern="(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)", string=article["instanceName"]) is None:
+            raise Exception("Please provide a valid image name")
+        else:
+            new_article.__setitem__('imageName', article['imageName'])
+    else:
+        raise Exception("No image name passed hence not creating a vm")
+    return new_article
