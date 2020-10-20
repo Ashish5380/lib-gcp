@@ -21,15 +21,14 @@ def create_gcp_instance():
     return Response(status=200)
 
 
-@views.route("/delete-instance", methods=['POST'])
+@views.route("/delete-instance", methods=['PUT'])
 def delete_gcp_instance():
     data = request.data
     article = json.loads(data, encoding="UTF-8")
-    project = article["project"]
     instance_name = article["instanceName"]
-    zone = article["zone"]
+    img_name = article["imageName"]
     inst = VM()
-    inst.delete_existing_instance(project, zone, instance_name)
+    inst.delete_existing_instance(instance_name, img_name)
     return Response(status=200)
 
 

@@ -4,7 +4,7 @@ from gcp.service.gcp_util_service import GcpUtils
 from gcp.models.database import Database
 from sqlalchemy.orm import sessionmaker
 from gcp.models.vm_model import Vm
-
+from gcp.service.image_service import Image
 
 class VM(GcpUtils):
     def __init__(self):
@@ -56,11 +56,13 @@ class VM(GcpUtils):
     def get_instance(self):
         pass
 
-    def delete_existing_instance(self, project, zone, instance_name):
+    def delete_existing_instance(self, instance_name, img_name):
         if self.validate_vm_req_db(instance_name):
             raise Exception("The given instance name is already deleted")
         try:
-            self.call_gcp_for_deleting_instance(project, zone, instance_name)
+            vm_obj = Vm.find_by_name(instance_name)
+            self.create_machine_image_and_mapping(vm_obj, img_name)
+            self.call_gcp_for_deleting_instance(vm_obj.project, vm_obj.zone, vm_obj.instance_name)
         except Exception as e:
             print("Exception while deleting the instance :: {}".format(e))
 
@@ -99,5 +101,21 @@ class VM(GcpUtils):
         vm_dict_data.__setitem__('is_stopped', 0)
         return vm_dict_data
 
+    def create_machine_image_and_mapping(self, vm_obj, img_name):
+        Image().create_machine_image_update_mapping(img_name, vm_obj)
+        self.update_vm_status(vm_obj)
+
+    def update_vm_status(self, vm_obj):
+        Session = sessionmaker(bind=self.db_engine)
+        session = Session()
+        try:
+            vm_obj.status = 0
+            session.add(vm_obj)
+        except Exception as e:
+            print("Error occurred while updating status of vm :: {0}".format(e))
+            raise Exception("Unable to create conection from database")
+        finally:
+            session.commit()
+            session.close()
 
 

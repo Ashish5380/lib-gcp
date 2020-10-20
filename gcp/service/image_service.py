@@ -53,7 +53,7 @@ class Image(GcpUtils):
             session.commit()
             session.close()
 
-    def validate_create_machine_image(self, image_name, vm_obj):
+    def create_machine_image_update_mapping(self, image_name, vm_obj):
         if self.validate_image(image_name):
             vm_url = self.create_vm_url(vm_obj)
             self.create_machine_image(image_name, vm_obj.project, vm_url)
