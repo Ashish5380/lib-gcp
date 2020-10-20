@@ -71,10 +71,13 @@ for image and also updates the mapping table. There are two flows :
 * In restart call, the application first checks if the vm existed earlier, and if it existed it will get the vm id and
 search for the image that was mapped last to that vm and create a vm with the respective image and start a python server.
 
+### Database
+* Used sqlite database, and the file `gcp_init.db` that is present is a test file can remove and start the project.
 
 ### Future Scopes
 * Use a schedular for closing all the dirty resources.
 * As currently a single api call take time to keeping the request in a persistant queue,
 such as rabbitmq.  
+
 
 
