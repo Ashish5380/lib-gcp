@@ -150,6 +150,7 @@ class VM(GcpUtils):
             print("Data for restarting vm :: {0}".format(vm_dict))
             self.call_gcp_for_recreating_instance(vm_dict['project'], vm_dict['zone'],
                                                   vm_dict['instance_name'], vm_dict['image_name'], vm_dict['family'])
+            self.update_vm_object_for_restart(vm_dict)
         else:
             raise Exception("The given instance name is either or running or not created yet")
 
@@ -192,5 +193,19 @@ class VM(GcpUtils):
         print("""
         Instance created.
         It will take a minute or two for the instance to complete work.""")
+
+    def update_vm_object_for_restart(self, vm_dict):
+        Session = sessionmaker(bind=self.db_engine)
+        session = Session()
+        try:
+            vm_obj = Vm.find_by_name(session, vm_dict['instance_name'])
+            vm_obj.status = 1
+            session.add(vm_obj)
+        except Exception as e:
+            print("Some error occurred while updating the vm status :: {0}".format(e))
+            raise Exception("Error updating the vm status")
+        finally:
+            session.commit()
+            session.close()
 
 
