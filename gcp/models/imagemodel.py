@@ -9,6 +9,7 @@ class ImageModel(Base):
 
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     image_name = Column('image_name', VARCHAR)
+    family_name = Column('family_name', VARCHAR)
     status = Column('status', SmallInteger, default=1)
     is_dirty_resource = Column('is_dirty_resource', SmallInteger, default=0)
 
@@ -20,6 +21,7 @@ class ImageModel(Base):
         self.image_name = data['image_name']
         self.status = data['status']
         self.is_dirty_resource = data['is_dirty_resource']
+        self.family_name = data['family_name']
 
     @classmethod
     def find_by_name(cls, session, name):

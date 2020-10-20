@@ -100,6 +100,21 @@ class GcpUtils:
         return result['items'] if 'items' in result else None
 
     @staticmethod
+    def stop_instance(compute, project, zone, name):
+        return compute.instances().stop(
+            project=project,
+            zone=zone,
+            instance=name).execute()
+
+    @staticmethod
+    def create_normal_image(compute, machine_image_name, source_disk, family, project):
+        return compute.images().insert(
+            project=project,
+            name=machine_image_name,
+            sourceDisk=source_disk,
+            family=family).execute()
+
+    @staticmethod
     def create_machine_image(machine_image_name, project_id, vm_url):
         url_json = load_image_url()
         url = url_json["IMAGE_URL"]

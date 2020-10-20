@@ -34,17 +34,33 @@ class VM(GcpUtils):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
         try:
-            result = Vm.find_by_name_and_status(session, instance_name)
+            result = Vm.find_by_name_and_status(session, instance_name, 1)
         except Exception as e:
             print("Some exception occurred while fetch vm details from db :: {0}".format(e))
             raise Exception("Cannot create instance, unable to reach database server")
         finally:
             session.close()
         print("Result in database :: {0}".format(result))
-        if len(result) == 0:
+        if result is None:
             return True
         else:
             return False
+
+    def validate_vm_stop_req_db(self, instance_name):
+        Session = sessionmaker(bind=self.db_engine)
+        session = Session()
+        try:
+            result = Vm.find_by_name_and_status(session, instance_name, 0)
+        except Exception as e:
+            print("Some exception occurred while fetch vm details from db :: {0}".format(e))
+            raise Exception("Cannot create instance, unable to reach database server")
+        finally:
+            session.close()
+        print("Result in database :: {0}".format(result))
+        if result is None:
+            return False
+        else:
+            return True
 
     def create_new_instance(self, project, zone, instance_name):
         print("Data for creating instance :: {0}, {1}. {2}".format(project, zone, instance_name))
@@ -57,8 +73,8 @@ class VM(GcpUtils):
     def get_instance(self):
         pass
 
-    def delete_existing_instance(self, instance_name, img_name):
-        if self.validate_vm_req_db(instance_name):
+    def delete_existing_instance(self, instance_name, img_name, family_name):
+        if self.validate_vm_stop_req_db(instance_name):
             raise Exception("The given instance name is already deleted")
         else:
             Session = sessionmaker(bind=self.db_engine)
@@ -66,10 +82,12 @@ class VM(GcpUtils):
             try:
                 vm_obj = Vm.find_by_name(session, instance_name)
                 print("vm object from db :: {0}".format(vm_obj))
-                self.create_machine_image_and_mapping(vm_obj, img_name)
-                self.call_gcp_for_deleting_instance(vm_obj.project, vm_obj.zone, vm_obj.instance_name)
+                self.stop_instance(self.compute, vm_obj.project, vm_obj.zone, vm_obj.vm_name)
+                self.create_machine_image_and_mapping(vm_obj, img_name, family_name)
+                self.call_gcp_for_deleting_instance(vm_obj.project, vm_obj.zone, vm_obj.vm_name)
             except Exception as e:
                 print("Exception while deleting the instance :: {}".format(e))
+                raise e
             finally:
                 session.close()
 
@@ -108,8 +126,8 @@ class VM(GcpUtils):
         vm_dict_data.__setitem__('is_stopped', 0)
         return vm_dict_data
 
-    def create_machine_image_and_mapping(self, vm_obj, img_name):
-        Image().create_machine_image_update_mapping(img_name, vm_obj)
+    def create_machine_image_and_mapping(self, vm_obj, img_name, family_name):
+        Image().create_machine_image_update_mapping(img_name, vm_obj, family_name)
         self.update_vm_status(vm_obj)
 
     def update_vm_status(self, vm_obj):

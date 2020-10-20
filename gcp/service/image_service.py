@@ -1,13 +1,16 @@
+import googleapiclient
 from gcp.models.database import Database
 from gcp.models.imagemodel import ImageModel
 from sqlalchemy.orm import sessionmaker
 from gcp.service.gcp_util_service import GcpUtils
 from gcp.models.mapping_model import Mapping
+from googleapiclient import discovery
 
 
 class Image(GcpUtils):
     def __init__(self):
         self.db_engine = Database().create_db_engine()
+        self.compute = googleapiclient.discovery.build('compute', 'v1')
 
     def validate_image(self, image_name):
         Session = sessionmaker(bind=self.db_engine)
@@ -24,21 +27,18 @@ class Image(GcpUtils):
         else:
             return False
 
-    def create_vm_url(self, vm_obj):
-        vm_url = "project/"+vm_obj.project+"/global/instances/"+vm_obj.vm_name
-        return vm_url
-
-    def generate_dict_for_db(self,image_name):
+    def generate_dict_for_db(self,image_name, family_name):
         data = {}
         data.__setitem__("image_name", image_name)
         data.__setitem__("status", 1)
         data.__setitem__("is_dirty_resource", 0)
+        data.__setitem__("family_name", family_name)
         return data
 
-    def put_image_request_to_db(self, image_name):
+    def put_image_request_to_db(self, image_name, family_name):
         Session = sessionmaker(bind=self.db_engine)
         session = Session()
-        data = self.generate_dict_for_db(image_name=image_name)
+        data = self.generate_dict_for_db(image_name=image_name, family_name=family_name)
         try:
             print("Data for entering in db :: {0}".format(data))
             vm_data = ImageModel(data=data)
@@ -52,11 +52,11 @@ class Image(GcpUtils):
             session.commit()
             session.close()
 
-    def create_machine_image_update_mapping(self, image_name, vm_obj):
+    def create_machine_image_update_mapping(self, image_name, vm_obj, family_name):
         if self.validate_image(image_name):
-            vm_url = self.create_vm_url(vm_obj)
-            self.create_machine_image(image_name, vm_obj.project, vm_url)
-            self.put_image_request_to_db(image_name)
+            source_disk = self.generate_source_disk(vm_obj)
+            self.create_normal_image(self.compute, image_name, source_disk, family_name, vm_obj.project)
+            self.put_image_request_to_db(image_name, family_name)
             self.update_mapping(vm_obj, image_name)
         else:
             print("Same name machine image was found in database")
@@ -119,6 +119,10 @@ class Image(GcpUtils):
         mapping_dict.__setitem__("im_id", im_id)
         mapping_dict.__setitem__("status", 1)
         return mapping_dict
+
+    def generate_source_disk(self, vm_obj):
+        source_disk_name = "zone/"+vm_obj.zone+"/disks/"+vm_obj.vm_name
+        return source_disk_name
 
 
 
