@@ -48,3 +48,15 @@ def validate_delete_request(article):
     else:
         raise Exception("No image name passed hence not creating a vm")
     return new_article
+
+
+def validate_restart_request(article):
+    new_article = {}
+    if 'instanceName' in article:
+        if re.match(pattern="(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)", string=article["instanceName"]) is None:
+            raise Exception("Please provide a valid instance name")
+        else:
+            new_article.__setitem__('instanceName', article['instanceName'])
+    else:
+        raise Exception("No instance name passed hence terminating process")
+    return new_article

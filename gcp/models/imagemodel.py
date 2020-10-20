@@ -27,4 +27,8 @@ class ImageModel(Base):
     def find_by_name(cls, session, name):
         return session.query(cls).filter_by(image_name=name).filter_by(status=1).first()
 
+    @classmethod
+    def find_by_id(cls, session, id):
+        return session.query(cls).filter_by(id=id).filter_by(status=1).first()
+
 

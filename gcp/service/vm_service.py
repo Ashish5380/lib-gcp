@@ -5,6 +5,7 @@ from gcp.models.database import Database
 from sqlalchemy.orm import sessionmaker
 from gcp.models.vm_model import Vm
 from gcp.service.image_service import Image
+from gcp.models.mapping_model import Mapping
 
 
 class VM(GcpUtils):
@@ -13,7 +14,7 @@ class VM(GcpUtils):
         self.db_engine = Database().create_db_engine()
 
     def call_gcp_for_creating_instance(self, project, zone, instance_name):
-        print('Creating instance ....')
+        print('Creating instance .... {0}'.format(instance_name))
         operation = GcpUtils.create_instance(self.compute, project, zone, instance_name)
         GcpUtils.wait_for_operation(self.compute, project, zone, operation['name'])
         instances = GcpUtils.list_instances(self.compute, project, zone)
@@ -22,8 +23,7 @@ class VM(GcpUtils):
             print(' - ' + instance['name'])
         print("""
         Instance created.
-        It will take a minute or two for the instance to complete work.
-        """)
+        It will take a minute or two for the instance to complete work.""")
 
     def call_gcp_for_deleting_instance(self, project, zone, instance_name):
         print('Deleting instance.')
@@ -143,5 +143,54 @@ class VM(GcpUtils):
         finally:
             session.commit()
             session.close()
+
+    def restart_instance(self, instance_name):
+        if self.validate_vm_stop_req_db(instance_name):
+            vm_dict = self.create_new_vm_request(instance_name)
+            print("Data for restarting vm :: {0}".format(vm_dict))
+            self.call_gcp_for_recreating_instance(vm_dict['project'], vm_dict['zone'],
+                                                  vm_dict['instance_name'], vm_dict['image_name'], vm_dict['family'])
+        else:
+            raise Exception("The given instance name is either or running or not created yet")
+
+    def create_new_vm_request(self, instance_name):
+        Session = sessionmaker(bind=self.db_engine)
+        session = Session()
+        try:
+            vm_obj = Vm.find_by_name(session, instance_name)
+            mapping_obj = Mapping.find_by_vm_id(session, vm_obj.id)
+            image_obj = Image.get_image_from_db(mapping_obj.im_id)
+        except Exception as e:
+            print("Some error occurred while getting vm, image and mapping information from db :: {0}".format(e))
+            raise Exception("Unable to create connection to database")
+        finally:
+            session.close()
+        vm_dict = self.create_vm_data(vm_obj, image_obj)
+        return vm_dict
+
+    def create_vm_data(self, vm_obj, image_obj):
+        if image_obj is not None and vm_obj is None:
+            data_dict = {}
+            data_dict.__setitem__("instance_name", vm_obj.vm_name)
+            data_dict.__setitem__("project", vm_obj.project)
+            data_dict.__setitem__("zone", vm_obj.zone)
+            data_dict.__setitem__("image_name", image_obj.image_name)
+            data_dict.__setitem__("family", image_obj.family)
+            return data_dict
+        else:
+            raise Exception("Data saved in database is malformed")
+
+    def call_gcp_for_recreating_instance(self, project, zone, instance_name, image_name, family):
+        print('Recreating instance .... {0}'.format(instance_name))
+        operation = GcpUtils.create_instance(self.compute, project, zone, instance_name,
+                                             image_project=image_name, image_family=family)
+        GcpUtils.wait_for_operation(self.compute, project, zone, operation['name'])
+        instances = GcpUtils.list_instances(self.compute, project, zone)
+        print('Instances in project %s and zone %s:' % (project, zone))
+        for instance in instances:
+            print(' - ' + instance['name'])
+        print("""
+        Instance created.
+        It will take a minute or two for the instance to complete work.""")
 
 

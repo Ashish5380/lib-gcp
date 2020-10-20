@@ -32,10 +32,11 @@ class GcpUtils:
             instance=name).execute()
 
     @staticmethod
-    def create_instance(compute, project, zone, name):
+    def create_instance(compute, project, zone, name, image_project='ubuntu-os-cloud',
+                        image_family='ubuntu-minimal-1804-lts'):
         # Get the latest ubuntu-minimal-1804-lts image.
         image_response = compute.images().getFromFamily(
-            project='ubuntu-os-cloud', family='ubuntu-minimal-1804-lts').execute()
+            project=image_project, family=image_family).execute()
         source_disk_image = image_response['selfLink']
 
         # Configure the machine

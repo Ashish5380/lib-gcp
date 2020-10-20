@@ -136,7 +136,15 @@ class Image(GcpUtils):
         source_disk_name = "zones/"+vm_obj.zone+"/disks/"+vm_obj.vm_name
         return source_disk_name
 
-
-
-
+    def get_image_from_db(self, img_id):
+        Session = sessionmaker(bind=self.db_engine)
+        session = Session()
+        try:
+            img_obj = ImageModel.find_by_id(session, img_id)
+        except Exception as e:
+            print("Some error occurred while getting image information from db :: {0}".format(e))
+            raise Exception("Unable to create connection to database")
+        finally:
+            session.close()
+        return img_obj
 
