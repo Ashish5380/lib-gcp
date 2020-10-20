@@ -106,13 +106,13 @@ class GcpUtils:
             zone=zone,
             instance=name).execute()
 
+
     @staticmethod
     def create_normal_image(compute, machine_image_name, source_disk, family, project):
+        image_body = construct_image_body(machine_image_name, source_disk, family)
         return compute.images().insert(
             project=project,
-            name=machine_image_name,
-            sourceDisk=source_disk,
-            family=family).execute()
+            body=image_body).execute()
 
     @staticmethod
     def create_machine_image(machine_image_name, project_id, vm_url):

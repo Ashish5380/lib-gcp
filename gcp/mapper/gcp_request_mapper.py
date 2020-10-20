@@ -38,3 +38,12 @@ def load_gcp_credentials():
         return _auth.apply_credentials(credentials, headers)
     except Exception as e:
         print("Some error occurred while creating authorized http :: {0}".format(e))
+
+
+def construct_image_body(machine_image_name, source_disk, family):
+    body = {}
+    body.__setitem__("name", machine_image_name)
+    body.__setitem__("sourceDisk", source_disk)
+    body.__setitem__("family", family)
+    return body
+

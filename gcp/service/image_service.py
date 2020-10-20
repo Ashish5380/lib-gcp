@@ -108,7 +108,7 @@ class Image(GcpUtils):
             raise Exception("Unable to create connection with database")
         finally:
             session.close()
-        if len(result) == 0:
+        if result is None:
             return False
         else:
             return True
@@ -121,7 +121,7 @@ class Image(GcpUtils):
         return mapping_dict
 
     def generate_source_disk(self, vm_obj):
-        source_disk_name = "zone/"+vm_obj.zone+"/disks/"+vm_obj.vm_name
+        source_disk_name = "zones/"+vm_obj.zone+"/disks/"+vm_obj.vm_name
         return source_disk_name
 
 
