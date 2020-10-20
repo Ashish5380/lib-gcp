@@ -74,7 +74,7 @@ class Image(GcpUtils):
             Session = sessionmaker(bind=self.db_engine)
             session = Session()
             try:
-                mapping = Mapping.query.filter_by(vm_id).filter_by(status=1).first()
+                mapping = Mapping.find_by_vm_id(vm_id, session)
                 old_im_id = mapping.im_id
                 mapping.im_id = im_id
                 session.add(mapping)
@@ -101,13 +101,15 @@ class Image(GcpUtils):
                 session.close()
 
     def update_mapping(self, vm_obj, image_name):
+        print("Came to update")
         if self.check_existing_mapping(vm_obj):
             Session = sessionmaker(bind=self.db_engine)
             session = Session()
             try:
                 image_result = ImageModel.find_by_name(session, image_name)
+                print("Image Name :: {0}, Image Result :: {1}".format(image_name, image_result))
                 old_im_id = self.update_mapping_table(vm_obj.id, image_result.id, is_existing=1)
-                old_image = ImageModel.query.filter_by(id=old_im_id).first()
+                old_image = ImageModel.find_by_id(session, old_im_id)
                 old_image.is_dirty_resource = 1
                 session.add(old_image)
             except Exception as e:
@@ -120,6 +122,7 @@ class Image(GcpUtils):
             session = Session()
             try:
                 image_result = ImageModel.find_by_name(session, image_name)
+                print("Image Name :: {0}, Image Result :: {1}".format(image_name, image_result))
                 self.update_mapping_table(vm_obj.id, image_result.id, is_existing=0)
             except Exception as e:
                 print("Some error occurred while updating mapping for vm and image :: {0}".format(e))
