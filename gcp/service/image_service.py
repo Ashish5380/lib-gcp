@@ -64,9 +64,19 @@ class Image(GcpUtils):
 
     def update_mapping_table(self, vm_id, im_id, is_existing=1):
         if is_existing == 1:
-            mapping = Mapping.query.filter_by(vm_id).filter_by(status=1).first()
-            old_im_id = mapping.im_id
-            mapping.im_id = im_id
+            Session = sessionmaker(bind=self.db_engine)
+            session = Session()
+            try:
+                mapping = Mapping.query.filter_by(vm_id).filter_by(status=1).first()
+                old_im_id = mapping.im_id
+                mapping.im_id = im_id
+                session.add(mapping)
+            except Exception as e:
+                print("Some error occurred while fetching mapping data :: {0}".format(e))
+                raise Exception("Unable to connect to database server")
+            finally:
+                session.commit()
+                session.close()
             return old_im_id
         else:
             Session = sessionmaker(bind=self.db_engine)
