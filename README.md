@@ -1,4 +1,4 @@
-## segmind-task
+## GCP RESOURCE USAGE LIBRARY
 This repo contains assignment for segmind.
 A python flask application for creating and maintaining gcp instances in real time.
 
